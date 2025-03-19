@@ -1,5 +1,4 @@
-from flask import Flask, send_file
-from os import getcwd
+from flask import Flask
 from flask_smorest import Api, Blueprint
 
 app = Flask(__name__)

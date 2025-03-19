@@ -1,6 +1,6 @@
 from concurrent import futures
 import grpc
-from grpc_reflection.v1alpha import reflection
+from grpc import reflection
 import service_pb2_grpc
 import service_pb2
 
