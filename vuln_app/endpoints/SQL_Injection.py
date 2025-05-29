@@ -2,7 +2,7 @@ import sqlite3
 from fastapi import Form, APIRouter
 from fastapi.responses import HTMLResponse
 
-app = APIRouter()
+router = APIRouter()
 
 
 def init_db():
@@ -29,7 +29,7 @@ def init_db():
 init_db()
 
 
-@app.get("/sqli", response_class=HTMLResponse)
+@router.get("/sqli", response_class=HTMLResponse)
 async def sqli_form():
     return """
     <html>
@@ -49,7 +49,7 @@ async def sqli_form():
     """
 
 
-@app.post("/sqli")
+@router.post("/sqli")
 async def sqli_vulnerable(username: str = Form(...), password: str = Form(...)):
     conn = sqlite3.connect("test.db")
     cursor = conn.cursor()

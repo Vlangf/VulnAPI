@@ -2,10 +2,10 @@ from fastapi import Form, APIRouter
 from fastapi.responses import HTMLResponse
 from jinja2 import Template
 
-app = APIRouter()
+router = APIRouter()
 
 
-@app.get("/ssti", response_class=HTMLResponse)
+@router.get("/ssti", response_class=HTMLResponse)
 async def ssti_form():
     return """
     <html>
@@ -24,7 +24,7 @@ async def ssti_form():
     """
 
 
-@app.post("/ssti")
+@router.post("/ssti")
 async def ssti_vulnerable(template: str = Form(...)):
     try:
         jinja_template = Template(template)

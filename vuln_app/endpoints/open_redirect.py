@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import RedirectResponse, HTMLResponse
 
-app = APIRouter()
+router = APIRouter()
 
 
-@app.get("/open_redirect")
+@router.get("/open_redirect")
 def open_redirect(redirect_to: str = Query(...)):
     return f"""
     <html>
@@ -14,7 +14,7 @@ def open_redirect(redirect_to: str = Query(...)):
     """
 
 
-@app.get("/redir", response_class=HTMLResponse)
+@router.get("/redir", response_class=HTMLResponse)
 async def redir_form():
     return """
     <html>
@@ -33,7 +33,7 @@ async def redir_form():
     """
 
 
-@app.get("/redir/redirect")
+@router.get("/redir/redirect")
 async def redir_vulnerable(url: str = Query(...)):
     print(f"Redirecting to: {url}")
     return RedirectResponse(url=url)

@@ -2,10 +2,10 @@ import xml.etree.ElementTree as ET
 from fastapi import Form, APIRouter
 from fastapi.responses import HTMLResponse
 
-app = APIRouter()
+router = APIRouter()
 
 
-@app.post("/xxe")
+@router.post("/xxe")
 async def xxe_vulnerable(xml_data: str = Form(...)):
     try:
         root = ET.fromstring(xml_data)
@@ -17,7 +17,7 @@ async def xxe_vulnerable(xml_data: str = Form(...)):
         return {"status": "error", "message": f"XML parsing error: {str(e)}"}
 
 
-@app.get("/xxe", response_class=HTMLResponse)
+@router.get("/xxe", response_class=HTMLResponse)
 async def xxe_form():
     return """
     <html>

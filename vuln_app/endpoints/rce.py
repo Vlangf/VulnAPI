@@ -2,10 +2,10 @@ import subprocess
 from fastapi import Form, APIRouter
 from fastapi.responses import HTMLResponse
 
-app = APIRouter()
+router = APIRouter()
 
 
-@app.get("/rce", response_class=HTMLResponse)
+@router.get("/rce", response_class=HTMLResponse)
 async def rce_form():
     return """
     <html>
@@ -22,7 +22,7 @@ async def rce_form():
     """
 
 
-@app.post("/rce")
+@router.post("/rce")
 async def rce_vulnerable(host: str = Form(...)):
     try:
         command = f"ping -c 1 {host}"

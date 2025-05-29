@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Query
 from fastapi.responses import HTMLResponse
 
-app = APIRouter()
+router = APIRouter()
 
 
-@app.get("/ptrav", response_class=HTMLResponse)
+@router.get("/ptrav", response_class=HTMLResponse)
 async def ptrav_form():
     return """
     <html>
@@ -21,7 +21,7 @@ async def ptrav_form():
     """
 
 
-@app.get("/ptrav/read")
+@router.get("/ptrav/read")
 async def ptrav_vulnerable(file: str = Query(...)):
     try:
         file_path = f"./files/{file}"
