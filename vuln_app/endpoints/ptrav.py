@@ -1,37 +1,53 @@
 from fastapi import APIRouter, Query
-from fastapi.responses import HTMLResponse
+from fastapi.responses import HTMLResponse, FileResponse, HTTPException
+import os
 
 router = APIRouter()
 
 
 @router.get("/ptrav", response_class=HTMLResponse)
-async def ptrav_form():
+async def ptrav_index():
+    # Создаем тестовые файлы
+    os.makedirs("uploads", exist_ok=True)
+    with open("uploads/test.txt", "w") as f:
+        f.write("Это тестовый файл")
+    with open("uploads/secret.txt", "w") as f:
+        f.write("Секретная информация!")
+
     return """
-    <html>
-        <body>
-            <h2>Path Traversal Test</h2>
-            <form action="/ptrav" method="get">
-                <label>File to read:</label>
-                <input type="text" name="file" placeholder="../../../etc/passwd">
-                <br><br>
-                <input type="submit" value="Read File">
-            </form>
-        </body>
-    </html>
+    <h2>Path Traversal Тестирование</h2>
+    <form action="/ptrav/read" method="GET">
+        <label>Имя файла:</label>
+        <input type="text" name="file" placeholder="test.txt">
+        <button type="submit">Читать файл</button>
+    </form>
+    
+    <form action="/ptrav/download" method="GET">
+        <label>Скачать файл:</label>
+        <input type="text" name="filename" placeholder="test.txt">
+        <button type="submit">Скачать</button>
+    </form>
     """
 
 
-@router.get("/ptrav/read")
-async def ptrav_vulnerable(file: str = Query(...)):
+@router.get("/ptrav/read", response_class=HTMLResponse)
+async def ptrav_read(file: str = Query("")):
     try:
-        file_path = f"./files/{file}"
-        print(f"Attempting to read file: {file_path}")
-
-        with open(file_path, "r") as f:
+        # Уязвимость: чтение файла без валидации пути
+        filepath = os.path.join("uploads", file)
+        with open(filepath, "r") as f:
             content = f.read()
 
-        return {"status": "success", "file_path": file_path, "content": content}
-    except FileNotFoundError:
-        return {"status": "error", "message": "File not found"}
+        return f'<h3>Содержимое файла {file}:</h3><pre>{content}</pre><a href="/ptrav">Назад</a>'
     except Exception as e:
-        return {"status": "error", "message": f"File reading error: {str(e)}"}
+        return f'<h3>Ошибка: {str(e)}</h3><a href="/ptrav">Назад</a>'
+
+
+@router.get("/ptrav/download")
+async def ptrav_download(filename: str = Query("")):
+    try:
+        # Уязвимость: скачивание файла без валидации пути
+        filepath = os.path.join("uploads", filename)
+        return FileResponse(filepath, filename=filename)
+    except Exception as e:
+        raise HTTPException(status_code=404, detail=f"Ошибка: {str(e)}")
