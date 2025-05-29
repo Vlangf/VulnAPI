@@ -35,12 +35,7 @@ app.include_router(ssti)
 app.include_router(xxe)
 app.include_router(rce)
 app.include_router(ptrav)
-app.include_router(ldap_injection)
-app.include_router(nosql_injection)
-app.include_router(jwt_vulnerabilities)
-app.include_router(deserialization)
-app.include_router(race_condition)
-app.include_router(idor)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=5035)
