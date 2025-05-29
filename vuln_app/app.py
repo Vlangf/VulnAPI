@@ -14,12 +14,6 @@ from endpoints.ssti import router as ssti
 from endpoints.xxe import router as xxe
 from endpoints.rce import router as rce
 from endpoints.ptrav import router as ptrav
-from endpoints.ldap_injection import router as ldap_injection
-from endpoints.nosql_injection import router as nosql_injection
-from endpoints.jwt_vulnerabilities import router as jwt_vulnerabilities
-from endpoints.deserialization import router as deserialization
-from endpoints.race_condition import router as race_condition
-from endpoints.idor import router as idor
 
 app = FastAPI()
 
