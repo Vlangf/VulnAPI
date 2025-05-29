@@ -1,5 +1,5 @@
 from flask import Flask, request
-from zeep import Settings, Client
+from zeep import Server, Settings
 from zeep.transports import Transport
 
 app = Flask(__name__)
@@ -63,7 +63,7 @@ class FlaskTransport(Transport):
 service = HelloWorldService()
 transport = FlaskTransport(app)
 settings = Settings(strict=False)
-server = Client(WSDL, transport=transport, settings=settings)
+server = Server(WSDL, transport=transport, settings=settings)
 
 @app.route("/soap", methods=["POST"])
 def soap():
