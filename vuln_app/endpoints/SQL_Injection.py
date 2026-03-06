@@ -16,7 +16,7 @@ async def sqli_index():
         <input type="password" name="password" placeholder="password">
         <button type="submit">Войти</button>
     </form>
-    
+
     <form action="/sqli/search" method="GET">
         <label>Поиск пользователя:</label>
         <input type="text" name="id" placeholder="1">
@@ -27,65 +27,56 @@ async def sqli_index():
 
 @router.post("/sqli/login", response_class=HTMLResponse)
 async def sqli_login(username: str = Form(""), password: str = Form("")):
-    conn = sqlite3.connect("test.db")
-    cursor = conn.cursor()
-
     # Уязвимость: SQL injection через конкатенацию строк
     query = f"SELECT * FROM users WHERE username = '{username}' AND password = '{password}'"
 
     try:
-        cursor.execute(query)
-        result = cursor.fetchone()
-        conn.close()
+        with sqlite3.connect("test.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
 
         if result:
             return f'<h3>Успешный вход! Добро пожаловать, {result[1]}</h3><a href="/sqli">Назад</a>'
         else:
             return f'<h3>Неверные учетные данные</h3><p>Query: {query}</p><a href="/sqli">Назад</a>'
     except Exception as e:
-        conn.close()
         return f'<h3>Ошибка базы данных: {str(e)}</h3><p>Query: {query}</p><a href="/sqli">Назад</a>'
 
 
 @router.get("/sqli/search", response_class=HTMLResponse)
 async def sqli_search(id: str = Query("")):
-    conn = sqlite3.connect("test.db")
-    cursor = conn.cursor()
-
     # Уязвимость: SQL injection в WHERE clause
     query = f"SELECT username, email FROM users WHERE id = {id}"
 
     try:
-        cursor.execute(query)
-        result = cursor.fetchone()
-        conn.close()
+        with sqlite3.connect("test.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
 
         if result:
             return f'<h3>Пользователь найден:</h3><p>Username: {result[0]}</p><p>Email: {result[1]}</p><a href="/sqli">Назад</a>'
         else:
             return f'<h3>Пользователь не найден</h3><p>Query: {query}</p><a href="/sqli">Назад</a>'
     except Exception as e:
-        conn.close()
         return f'<h3>Ошибка базы данных: {str(e)}</h3><p>Query: {query}</p><a href="/sqli">Назад</a>'
 
 
 @router.get("/api/users/{user_id}")
 async def get_user_api(user_id: str):
     """API эндпоинт с SQL Injection уязвимостью"""
-    conn = sqlite3.connect("test.db")
-    cursor = conn.cursor()
-
     query = f"SELECT username, email FROM users WHERE id = {user_id}"
 
     try:
-        cursor.execute(query)
-        result = cursor.fetchone()
-        conn.close()
+        with sqlite3.connect("test.db") as conn:
+            cursor = conn.cursor()
+            cursor.execute(query)
+            result = cursor.fetchone()
 
         if result:
             return {"username": result[0], "email": result[1], "query": query}
         else:
             return {"error": "User not found", "query": query}
     except Exception as e:
-        conn.close()
         return {"error": str(e), "query": query}

@@ -20,8 +20,9 @@ def send_requests():
     # # file inclusion
     requests.get(f'{host}/page/%3Chtml%3E123%3C%2Fhtml%3E')
     # file upload
-    files = [('file', ('file', open('file_for_test', 'rb'), 'application/octet-stream'))]
-    requests.post(f'{host}/upload_file', files=files)
+    with open('file_for_test', 'rb') as f:
+        files = [('file', ('file', f, 'application/octet-stream'))]
+        requests.post(f'{host}/upload_file', files=files)
     # sql injection
     requests.post(f'{host}/items', json={"name": f"test_{rnd(1, 9999999):07d}", "description": "description"})
     # # xss
